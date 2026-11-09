@@ -1,0 +1,9 @@
+sequenceDiagram
+    actor Main
+    participant Element as SourceCodeFile
+    participant Visitor as SecurityAuditVisitor
+    Main->>Element: accept(visitor)
+    Element->>Visitor: visit(this)
+    Note over Element,Visitor: Compile-time overload selects visit(SourceCodeFile)
+    Visitor->>Visitor: inspect source content and risk flag
+    Visitor-->>Main: findings stored in visitor

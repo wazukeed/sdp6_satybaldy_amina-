@@ -1,0 +1,71 @@
+classDiagram
+    direction TB
+
+    class ProjectElement {
+        <<interface>>
+        +accept(ProjectVisitor visitor) void
+    }
+    class SourceCodeFile {
+        -String path
+        -String content
+        -int complexity
+        -boolean highRisk
+        +accept(ProjectVisitor visitor) void
+    }
+    class TestFile {
+        -String path
+        -String content
+        -List~String~ testedClasses
+        +accept(ProjectVisitor visitor) void
+    }
+    class ConfigurationFile {
+        -String path
+        -String content
+        +accept(ProjectVisitor visitor) void
+    }
+    class DependencyFile {
+        -String path
+        -List~Dependency~ dependencies
+        +accept(ProjectVisitor visitor) void
+    }
+    class Directory {
+        -String name
+        -List~ProjectElement~ children
+        +add(ProjectElement element) void
+        +accept(ProjectVisitor visitor) void
+    }
+    class Dependency {
+        +String name
+        +String version
+        +boolean vulnerable
+        +boolean prohibited
+    }
+    class ProjectVisitor {
+        <<interface>>
+        +visit(SourceCodeFile) void
+        +visit(TestFile) void
+        +visit(ConfigurationFile) void
+        +visit(DependencyFile) void
+        +visit(Directory) void
+    }
+    class SecurityAuditVisitor
+    class ProjectStatisticsVisitor
+    class QualityGateVisitor
+    class ComplianceVisitor
+    class TechnicalDebtVisitor
+
+    ProjectElement <|.. SourceCodeFile
+    ProjectElement <|.. TestFile
+    ProjectElement <|.. ConfigurationFile
+    ProjectElement <|.. DependencyFile
+    ProjectElement <|.. Directory
+    Directory o-- ProjectElement : contains
+    DependencyFile o-- Dependency : contains
+    ProjectVisitor <|.. SecurityAuditVisitor
+    ProjectVisitor <|.. ProjectStatisticsVisitor
+    ProjectVisitor <|.. QualityGateVisitor
+    ProjectVisitor <|.. ComplianceVisitor
+    ProjectVisitor <|.. TechnicalDebtVisitor
+    ProjectVisitor ..> ProjectElement : visits by overload
+    QualityGateVisitor --> ProjectStatisticsVisitor : reads metrics
+    QualityGateVisitor --> SecurityAuditVisitor : reads critical issues
